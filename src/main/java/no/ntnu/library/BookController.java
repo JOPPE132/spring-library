@@ -66,9 +66,10 @@ public class BookController {
 
     /**
      * HTTP END POINT for adding new books. POST = New
+     * @throws Exception
      */
     @PostMapping("/books")
-    public ResponseEntity<Object> addBook(@RequestBody Book book){
+    public ResponseEntity<Object> addBook(@RequestBody Book book) throws Exception{
         ResponseEntity response;
 
         if(book != null){
@@ -202,12 +203,16 @@ public class BookController {
      * Adds a book to the library.
      * @param book the book to add to the library.
      */
-    public void addBookToCollection(Book book){
-        if(isTitleValid(book.getTitle()) 
+    public void addBookToCollection(Book book) throws Exception{ 
+        try{
+            if(isTitleValid(book.getTitle()) 
             && isIdValid(book.getId())
             && isYearValid(book.getYear())
             && isNumberOfPagesValid(book.getNumberOfPages())){
                 books.add(book);
+        }
+        } catch (Exception e){
+            e.getStackTrace();
         }
     }
 }
