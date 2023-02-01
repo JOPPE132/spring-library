@@ -1,10 +1,17 @@
 package no.ntnu.library;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Represents a book in our library", title = "Book")
 public class Book {
 
+    @Schema(description = "Title of the book")
     private String title;
+    @Schema(description = "ID of the book")
     private int id;
+    @Schema(description = "Production year of the book")
     private int year;
+    @Schema(description = "Number of pages of the book")
     private int numberOfPages;
     
     public Book(String title, int id, int year, int numberOfPages){

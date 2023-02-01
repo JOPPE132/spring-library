@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 /**
  * REST API Controller for all endpoints related to book.
  */
@@ -41,6 +43,8 @@ public class BookController {
      * HTTP END POINT for getting all the books. GET = Read
      */
     @GetMapping("/books")
+    @Operation(summary = "Get all books in list.", 
+               description = "List all books currently stored in colleciton")
     public List<Book> getBooks() {
         return books; // if books.size() = 0?? invalid? exception?
     }
@@ -73,7 +77,7 @@ public class BookController {
         ResponseEntity response;
 
         if(book != null){
-            response = new ResponseEntity<>(book, HttpStatus.OK); //HTTP Response 200.
+            response = new ResponseEntity<>(book, HttpStatus.CREATED); //HTTP Response 201.
             addBookToCollection(book);
         } else{
             response = new ResponseEntity<>(HttpStatus.BAD_REQUEST); //HTTP Response 400.
@@ -204,15 +208,11 @@ public class BookController {
      * @param book the book to add to the library.
      */
     public void addBookToCollection(Book book) throws Exception{ 
-        try{
-            if(isTitleValid(book.getTitle()) 
+        if(isTitleValid(book.getTitle()) 
             && isIdValid(book.getId())
             && isYearValid(book.getYear())
             && isNumberOfPagesValid(book.getNumberOfPages())){
                 books.add(book);
-        }
-        } catch (Exception e){
-            e.getStackTrace();
-        }
     }
+}
 }
