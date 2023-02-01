@@ -43,44 +43,44 @@ public class BookController {
      * HTTP END POINT for getting all the books. GET = Read
      */
     @GetMapping("/books")
-    @Operation(summary = "Get all books in list.", 
-               description = "List all books currently stored in colleciton")
+    @Operation(summary = "Get all books in list.", description = "List all books currently stored in colleciton")
     public List<Book> getBooks() {
         return books; // if books.size() = 0?? invalid? exception?
     }
 
     /**
      * HTTP END POINT for getting a book with a certain ID. GET = Read
+     * 
      * @param id the given Id of the book
      * @return response code 200 or 404; OK or NOT_FOUND.
      */
     @GetMapping("/books/{id}")
-    public ResponseEntity<Object> getBook(@PathVariable int id){
+    public ResponseEntity<Object> getBook(@PathVariable int id) {
         ResponseEntity<Object> response;
 
         Book book = findBookById(id);
-        if(book != null){
-            response = new ResponseEntity<>(book, HttpStatus.OK); //HTTP Response 200.
-        } else{
-            response = new ResponseEntity<>("No books found with ID: " + id, HttpStatus.NOT_FOUND); //HTTP Reponse 404.
+        if (book != null) {
+            response = new ResponseEntity<>(book, HttpStatus.OK); // HTTP Response 200.
+        } else {
+            response = new ResponseEntity<>("No books found with ID: " + id, HttpStatus.NOT_FOUND); // HTTP Reponse 404.
         }
         return response;
     }
 
-
     /**
      * HTTP END POINT for adding new books. POST = New
+     * 
      * @throws Exception
      */
     @PostMapping("/books")
-    public ResponseEntity<Object> addBook(@RequestBody Book book) throws Exception{
+    public ResponseEntity<Object> addBook(@RequestBody Book book) throws Exception {
         ResponseEntity response;
 
-        if(book != null){
-            response = new ResponseEntity<>(book, HttpStatus.CREATED); //HTTP Response 201.
+        if (book != null && isVerified(book)) {
+            response = new ResponseEntity<>(book, HttpStatus.CREATED); // HTTP Response 201.
             addBookToCollection(book);
-        } else{
-            response = new ResponseEntity<>(HttpStatus.BAD_REQUEST); //HTTP Response 400.
+        } else {
+            response = new ResponseEntity<>(HttpStatus.BAD_REQUEST); // HTTP Response 400.
         }
         return response;
     }
@@ -89,15 +89,15 @@ public class BookController {
      * HTTP END POINT for delete a existing book. DELETE = Delete
      */
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<Object> deleteBook(@PathVariable int id){
+    public ResponseEntity<Object> deleteBook(@PathVariable int id) {
         ResponseEntity response;
 
         Book book = deleteBookById(id);
 
-        if(book != null){
+        if (book != null) {
             books.remove(book);
             response = new ResponseEntity<>(book, HttpStatus.OK);
-        } else{
+        } else {
             response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return response;
@@ -106,9 +106,11 @@ public class BookController {
     /**
      * Check if book title is valid. Title cannot contain symbols or other
      * irregular characters.
+     * 
      * @param title title of the book
-     * @return true or false on whether the title is valid or not. valid if title does
-     * not contain illegal symbols, otherwise invalid.
+     * @return true or false on whether the title is valid or not. valid if title
+     *         does
+     *         not contain illegal symbols, otherwise invalid.
      */
     public boolean isTitleValid(String title) {
         Pattern pattern = Pattern.compile("[/~#@*+%{}<>\\[\\]|\"\\_^]"); // All invalid symbols
@@ -124,15 +126,16 @@ public class BookController {
     }
 
     /**
-     * Check if Id of book is valid or not. Id is only valid if given id is 
+     * Check if Id of book is valid or not. Id is only valid if given id is
      * above 0(exclusive).
+     * 
      * @param id the given id of the book.
      * @return true or false on whether the book has a valid id or not.
      */
-    public boolean isIdValid(int id){
+    public boolean isIdValid(int id) {
         boolean isValid = true;
 
-        if(id <= 0){
+        if (id <= 0) {
             isValid = false;
         }
         return isValid;
@@ -141,27 +144,30 @@ public class BookController {
     /**
      * Check if the production year of the book is valid. Production year must be
      * above 1400's, because thats when books started to get printed!
+     * 
      * @param year the given year of the book.
      * @return true or false on whether it has valid production year.
      */
-    public boolean isYearValid(int year){
+    public boolean isYearValid(int year) {
         boolean isValid = true;
 
-        if(year < 1400){
+        if (year < 1400) {
             isValid = false;
         }
         return isValid;
     }
 
     /**
-     * Check if the number of pages on a book is valid or not. Number of pages cannot be 0 or less than 0.
+     * Check if the number of pages on a book is valid or not. Number of pages
+     * cannot be 0 or less than 0.
+     * 
      * @param numberOfPages the given number of amount of pages.
      * @return true or false on whether it has valid amounts or not.
      */
-    public boolean isNumberOfPagesValid(int numberOfPages){
+    public boolean isNumberOfPagesValid(int numberOfPages) {
         boolean isValid = true;
 
-        if(numberOfPages <= 0){
+        if (numberOfPages <= 0) {
             isValid = false;
         }
         return isValid;
@@ -188,7 +194,13 @@ public class BookController {
         return foundBook;
     }
 
-    public Book deleteBookById(int id){
+    /**
+     * Deletes a book by input ID
+     * 
+     * @param id of the book to delete
+     * @return the book to delete if found.
+     */
+    public Book deleteBookById(int id) {
         Book foundBook = null;
         Iterator<Book> it = books.iterator();
 
@@ -202,17 +214,32 @@ public class BookController {
         return foundBook;
     }
 
-
     /**
      * Adds a book to the library.
+     * 
      * @param book the book to add to the library.
      */
-    public void addBookToCollection(Book book) throws Exception{ 
-        if(isTitleValid(book.getTitle()) 
-            && isIdValid(book.getId())
-            && isYearValid(book.getYear())
-            && isNumberOfPagesValid(book.getNumberOfPages())){
-                books.add(book);
+    public void addBookToCollection(Book book) throws Exception {
+        if (isVerified(book)) {
+            books.add(book);
+        }
     }
-}
+
+    /**
+     * Verifies if a book is created correctly.
+     * 
+     * @param book to verify.
+     * @return true or false on whether the book is faulty or not.
+     */
+    public boolean isVerified(Book book) {
+        boolean isVerified = false;
+
+        if (isTitleValid(book.getTitle())
+                && isIdValid(book.getId())
+                && isYearValid(book.getYear())
+                && isNumberOfPagesValid(book.getNumberOfPages())) {
+            isVerified = true;
+        }
+        return isVerified;
+    }
 }

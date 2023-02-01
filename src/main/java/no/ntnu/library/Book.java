@@ -13,8 +13,8 @@ public class Book {
     private int year;
     @Schema(description = "Number of pages of the book")
     private int numberOfPages;
-    
-    public Book(String title, int id, int year, int numberOfPages){
+
+    public Book(String title, int id, int year, int numberOfPages) {
         setTitle(title);
         setId(id);
         setYear(year);
@@ -52,6 +52,4 @@ public class Book {
     public void setNumberOfPages(int numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
-
-    
 }
