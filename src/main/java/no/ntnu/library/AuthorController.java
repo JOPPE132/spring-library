@@ -70,10 +70,17 @@ public class AuthorController {
     public ResponseEntity<Object> deleteAuthorMap(@RequestBody Author author) {
         ResponseEntity response;
 
+        if (author != null) {
+            response = new ResponseEntity<>("The deletion was successfull:", HttpStatus.OK);
+            authors.remove(author);
+        } else {
+            response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return response;
     }
 
-    public void deleteAuthor(String name) {
+    public Author deleteAuthor(String name) {
         Author author = null;
 
         Iterator<Author> it = authors.iterator();
@@ -83,9 +90,9 @@ public class AuthorController {
 
             if (a.getFirstName().equals(name)) {
                 author = a;
-                authors.remove(author);
             }
         }
+        return author;
     }
 
     public List<Author> getList() {
