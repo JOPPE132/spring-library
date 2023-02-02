@@ -54,14 +54,16 @@ public class AuthorController {
 
     @Operation(summary = "Add author", description = "Adds a author to the author collection")
     @PostMapping("/authors")
-    public ResponseEntity<Object> addAuthorMap(@RequestBody Author author) throws Exception { 
+    public ResponseEntity<Object> addAuthorMap(@RequestBody Author author) throws Exception {
         ResponseEntity response;
 
         if (author != null) {
-            response = new ResponseEntity<>(author, HttpStatus.CREATED);
+            response = new ResponseEntity<>(
+                    "The following author was added: " + author.getFirstName() + " " + author.getLastName(),
+                    HttpStatus.CREATED);
             this.authors.add(author);
         } else {
-            response = new ResponseEntity<>(author, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>("Faulty author", HttpStatus.BAD_REQUEST);
         }
         return response;
     }
@@ -71,10 +73,11 @@ public class AuthorController {
     public ResponseEntity<Object> deleteAuthorMap(@PathVariable String lastName) {
         ResponseEntity response;
 
-        Author author = deleteAuthorByLastName(lastName);
+        Author author = findAuthorByLastName(lastName);
 
         if (author != null) {
-            response = new ResponseEntity<>("Successfull deletion of: " + author.getFirstName() + " " + author.getLastName(), HttpStatus.OK);
+            response = new ResponseEntity<>(
+                    "Successfull deletion of: " + author.getFirstName() + " " + author.getLastName(), HttpStatus.OK);
             authors.remove(author);
         } else {
             response = new ResponseEntity<>("Author not found.", HttpStatus.NOT_FOUND);
@@ -85,10 +88,11 @@ public class AuthorController {
 
     /**
      * Delete author by name.
+     * 
      * @param name of author
      * @return the author for deletion
      */
-    public Author deleteAuthorByLastName(String name) {
+    public Author findAuthorByLastName(String name) {
         Author author = null;
 
         Iterator<Author> it = authors.iterator();
@@ -108,5 +112,9 @@ public class AuthorController {
      */
     public List<Author> getList() {
         return this.authors;
+    }
+
+    public void deleteAuthor(Author author) {
+        this.authors.remove(author);
     }
 }

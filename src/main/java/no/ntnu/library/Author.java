@@ -5,26 +5,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 //@Schema(description = "Represents an Author in our library", title = "Author")
 public class Author {
 
-    //@Schema(description = "ID of the author")
+    // @Schema(description = "ID of the author")
     private int id;
-    //@Schema(description = "First name of the author")
+    // @Schema(description = "First name of the author")
     private String firstName;
-    //@Schema(description = "Last name of the author")
+    // @Schema(description = "Last name of the author")
     private String lastName;
-    //@Schema(description = "Birth year of the author")
+    // @Schema(description = "Birth year of the author")
     private int birthYear;
 
     public Author(int id, String firstName, String lastName, int birthYear) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthYear = birthYear;
-    }
-
-    public Author(){
+        setId(id);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setBirthYear(birthYear);
 
     }
-    
+
+    public Author() {
+    }
+
     public int getId() {
         return id;
     }
