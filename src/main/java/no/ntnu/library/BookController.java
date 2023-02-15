@@ -1,11 +1,14 @@
 package no.ntnu.library;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.management.RuntimeErrorException;
 import javax.swing.RepaintManager;
 
 import org.apache.catalina.connector.Response;
@@ -27,26 +30,28 @@ import io.swagger.v3.oas.annotations.Operation;
 @RestController
 public class BookController {
 
-    List<Book> books = new ArrayList<>();
-
-    public BookController() {
-        initializeDate(); // dummy books, not necessary.
-    }
-
-    private void initializeDate() {
-        books.add(new Book("12 Rules for Life", 1, 2015, 251));
-        books.add(new Book("Algorithms and Datastructures", 2, 2021, 441));
-        books.add(new Book("Fullstack with Spring and React", 3, 2022, 681));
-    }
-
     /*
      * HTTP END POINT for getting all the books. GET = Read
      */
+    // @GetMapping("/books")
+    // @Operation(summary = "Get all books in list.", description = "List all books currently stored in colleciton")
+    // public List<Book> getBooks() {
+    //     return books; // if books.size() = 0?? invalid? exception?
+    // }
+
     @GetMapping("/books")
-    @Operation(summary = "Get all books in list.", description = "List all books currently stored in colleciton")
-    public List<Book> getBooks() {
-        return books; // if books.size() = 0?? invalid? exception?
+    public List<Book> getAll(){
+        //Establish connection to SQL database
+        try {
+            DriverManager.getConnection("jdbc:mysql://localhost:3306/library?user=root&password=LZ38f448");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String query = "SELECT * FROM books";
+        //connection.prepareStatement(query);
+        return null;
     }
+
 
     /**
      * HTTP END POINT for getting a book with a certain ID. GET = Read
@@ -54,54 +59,54 @@ public class BookController {
      * @param id the given Id of the book
      * @return response code 200 or 404; OK or NOT_FOUND.
      */
-    @GetMapping("/books/{id}")
-    public ResponseEntity<Object> getBook(@PathVariable int id) {
-        ResponseEntity<Object> response;
+    // @GetMapping("/books/{id}")
+    // public ResponseEntity<Object> getBook(@PathVariable int id) {
+    //     ResponseEntity<Object> response;
 
-        Book book = findBookById(id);
-        if (book != null) {
-            response = new ResponseEntity<>(book, HttpStatus.OK); // HTTP Response 200.
-        } else {
-            response = new ResponseEntity<>("No books found with ID: " + id, HttpStatus.NOT_FOUND); // HTTP Reponse 404.
-        }
-        return response;
-    }
+    //     Book book = findBookById(id);
+    //     if (book != null) {
+    //         response = new ResponseEntity<>(book, HttpStatus.OK); // HTTP Response 200.
+    //     } else {
+    //         response = new ResponseEntity<>("No books found with ID: " + id, HttpStatus.NOT_FOUND); // HTTP Reponse 404.
+    //     }
+    //     return response;
+    // }
 
     /**
      * HTTP END POINT for adding new books. POST = New
      * 
      * @throws Exception
      */
-    @PostMapping("/books")
-    public ResponseEntity<Object> addBook(@RequestBody Book book) throws Exception {
-        ResponseEntity response;
+    // @PostMapping("/books")
+    // public ResponseEntity<Object> addBook(@RequestBody Book book) throws Exception {
+    //     ResponseEntity response;
 
-        if (book != null && isVerified(book)) {
-            response = new ResponseEntity<>(book, HttpStatus.CREATED); // HTTP Response 201.
-            addBookToCollection(book);
-        } else {
-            response = new ResponseEntity<>(HttpStatus.BAD_REQUEST); // HTTP Response 400.
-        }
-        return response;
-    }
+    //     if (book != null && isVerified(book)) {
+    //         response = new ResponseEntity<>(book, HttpStatus.CREATED); // HTTP Response 201.
+    //         addBookToCollection(book);
+    //     } else {
+    //         response = new ResponseEntity<>(HttpStatus.BAD_REQUEST); // HTTP Response 400.
+    //     }
+    //     return response;
+    //}
 
     /**
      * HTTP END POINT for delete a existing book. DELETE = Delete
      */
-    @DeleteMapping("/books/{id}")
-    public ResponseEntity<Object> deleteBook(@PathVariable int id) {
-        ResponseEntity response;
+    // @DeleteMapping("/books/{id}")
+    // public ResponseEntity<Object> deleteBook(@PathVariable int id) {
+    //     ResponseEntity response;
 
-        Book book = deleteBookById(id);
+    //     Book book = deleteBookById(id);
 
-        if (book != null) {
-            books.remove(book);
-            response = new ResponseEntity<>(book, HttpStatus.OK);
-        } else {
-            response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return response;
-    }
+    //     if (book != null) {
+    //         books.remove(book);
+    //         response = new ResponseEntity<>(book, HttpStatus.OK);
+    //     } else {
+    //         response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    //     }
+    //     return response;
+    // }
 
     /**
      * Check if book title is valid. Title cannot contain symbols or other
@@ -180,19 +185,19 @@ public class BookController {
      * @param id
      * @return
      */
-    public Book findBookById(int id) {
-        Book foundBook = null;
-        Iterator<Book> it = books.iterator();
+    // public Book findBookById(int id) {
+    //     Book foundBook = null;
+    //     Iterator<Book> it = books.iterator();
 
-        while (it.hasNext()) {
-            Book b = it.next();
+    //     while (it.hasNext()) {
+    //         Book b = it.next();
 
-            if (b.getId() == id) {
-                foundBook = b;
-            }
-        }
-        return foundBook;
-    }
+    //         if (b.getId() == id) {
+    //             foundBook = b;
+    //         }
+    //     }
+    //     return foundBook;
+    // }
 
     /**
      * Deletes a book by input ID
@@ -200,30 +205,30 @@ public class BookController {
      * @param id of the book to delete
      * @return the book to delete if found.
      */
-    public Book deleteBookById(int id) {
-        Book foundBook = null;
-        Iterator<Book> it = books.iterator();
+    // public Book deleteBookById(int id) {
+    //     Book foundBook = null;
+    //     Iterator<Book> it = books.iterator();
 
-        while (it.hasNext()) {
-            Book b = it.next();
+    //     while (it.hasNext()) {
+    //         Book b = it.next();
 
-            if (b.getId() == id) {
-                foundBook = b;
-            }
-        }
-        return foundBook;
-    }
+    //         if (b.getId() == id) {
+    //             foundBook = b;
+    //         }
+    //     }
+    //     return foundBook;
+    // }
 
     /**
      * Adds a book to the library.
      * 
      * @param book the book to add to the library.
      */
-    public void addBookToCollection(Book book) throws Exception {
-        if (isVerified(book)) {
-            books.add(book);
-        }
-    }
+    // public void addBookToCollection(Book book) throws Exception {
+    //     if (isVerified(book)) {
+    //         books.add(book);
+    //     }
+    // }
 
     /**
      * Verifies if a book is created correctly.
