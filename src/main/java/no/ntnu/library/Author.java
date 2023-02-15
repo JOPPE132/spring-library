@@ -1,17 +1,21 @@
 package no.ntnu.library;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-//@Schema(description = "Represents an Author in our library", title = "Author")
+@Schema(description = "Represents an Author in our library", title = "Author")
+@Entity
 public class Author {
 
-    // @Schema(description = "ID of the author")
+    @Schema(description = "ID of the author")
+    @Id
     private int id;
-    // @Schema(description = "First name of the author")
+    @Schema(description = "First name of the author")
     private String firstName;
-    // @Schema(description = "Last name of the author")
+    @Schema(description = "Last name of the author")
     private String lastName;
-    // @Schema(description = "Birth year of the author")
+    @Schema(description = "Birth year of the author")
     private int birthYear;
 
     public Author(int id, String firstName, String lastName, int birthYear) {
@@ -19,7 +23,6 @@ public class Author {
         setFirstName(firstName);
         setLastName(lastName);
         setBirthYear(birthYear);
-
     }
 
     public Author() {
@@ -56,5 +59,4 @@ public class Author {
     public void setBirthYear(int birthYear) {
         this.birthYear = birthYear;
     }
-
 }

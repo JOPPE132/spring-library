@@ -8,6 +8,8 @@ import java.util.Iterator;
 import javax.swing.text.html.parser.Entity;
 
 import org.apache.catalina.connector.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,23 +28,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class AuthorController {
 
+    Logger logger = LoggerFactory.getLogger(AuthorController.class);
     private List<Author> authors;
 
     public AuthorController() {
-        initializeData();
-    }
-
-    private void initializeData() {
-        authors = new ArrayList<>();
-        authors.add(new Author(1, "Stephen", "King", 1947));
-        authors.add(new Author(2, "Charles", "Dickens", 1812));
-        authors.add(new Author(3, "George", "Orwell", 1903));
     }
 
     @Operation(summary = "Get all books", description = "Get all books inside collection")
     @GetMapping("/authors")
     public ResponseEntity<Object> getAuthors() {
         ResponseEntity response;
+
+        logger.error("Something went wrong");
 
         if (this.authors.isEmpty()) {
             response = new ResponseEntity<>("Collection contains no elements", HttpStatus.BAD_REQUEST);
