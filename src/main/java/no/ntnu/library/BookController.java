@@ -242,4 +242,8 @@ public class BookController {
         }
         return isVerified;
     }
+
+    public List<Book> getList(){
+        return this.books;
+    }
 }
